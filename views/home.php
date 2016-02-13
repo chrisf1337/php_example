@@ -7,7 +7,11 @@ if (!empty($this->context['username'])) {
 <div><a href="javascript:void(0);" class="new-thread-link">[Start a new thread]</a></div>
 
 <?php
+if (!empty($this->context['frontPageThreads'])) {
+  foreach ($this->context['frontPageThreads'] as $thread) {
 
+  }
+}
 ?>
 
 <script src="http://code.jquery.com/jquery-2.2.0.js"></script>

@@ -1,5 +1,5 @@
 <?php
-require_once('/Users/chrisf/projects/php_example/connection.php');
+require_once(__DIR__ . '/../connection.php');
 
 class Post implements JsonSerializable {
   public $op;
@@ -55,11 +55,15 @@ class Thread implements JsonSerializable {
     $this->posts = $posts;
   }
 
-  static function find() {
+  static function findMostRecent($n) {
     $db = Db::getInstance();
-    // $threads = $db->threads->find().sort(['_id' => -1]).limit(10);
-    // var_dump($threads);
-    // return $threads;
+    $threadsCursor = $db->threads->find()->sort(['_id' => -1])->limit($n);
+    $array = [];
+    foreach ($threadsCursor as $threadObject) {
+      array_push($array, new Thread($threadObject['_id']->__toString(), $threadObject['subject'],
+                                    $threadObject['posts']));
+    }
+    return $array;
   }
 
   static function create($op, $subject, $body) {
