@@ -1,9 +1,9 @@
 <?php
 class BaseController {
-  public $templateVars;
+  public $context;
 
   function __construct() {
-    $this->templateVars = [];
+    $this->context = [];
   }
 
   function get() { }
@@ -24,6 +24,20 @@ class BaseController {
 
   function render() {
     require_once('views/layout.php');
+  }
+}
+
+class JsonResponseController extends BaseController {
+  function render() {
+    header('Content-Type: application/json');
+    switch ($_SERVER['REQUEST_METHOD']) {
+      case 'GET':
+        $this->getRender();
+        break;
+      case 'POST':
+        $this->postRender();
+        break;
+    }
   }
 }
 

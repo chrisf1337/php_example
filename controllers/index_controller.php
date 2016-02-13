@@ -1,11 +1,19 @@
 <?php
 require_once('base_controller.php');
+require_once('models/post.php');
+
 class IndexController extends BaseController {
+  public $frontPageThreads;
+
   function __construct() {
     parent::__construct();
     if (!empty($_SESSION['user'])) {
-      $this->templateVars['username'] = $_SESSION['user']->username;
+      $this->context['username'] = $_SESSION['user']->username;
     }
+  }
+
+  function get() {
+    // $this->frontPageThreads = Thread::find();
   }
 
   function getRender() {

@@ -1,13 +1,16 @@
 <h1>Login</h1>
-<form action="/php_example_mvc/login" method="post">
-  Username: <input type="text" name="username"><br>
-  Password: <input type="password" name="password"><br>
-  <input type="submit" value="Submit">
-</form>
+<div class="login-form">
+  <form action="/php_example/login" method="post">
+    <div class="login-form-elem">Username: <input type="text" name="username"></div>
+    <div class="login-form-elem">Password: <input type="password" name="password"></div>
+    <div class="button-holder"><input type="submit" value="Submit"></div>
+  </form>
+</div>
+
 <?php
-if ($this->templateVars['loginError']) {
+if ($this->context['loginError']) {
 ?>
-<div>User/password combination was incorrect.</div>
+<div><?php echo $this->context['loginErrorMessage']; ?></div>
 <?php
 }
 ?>

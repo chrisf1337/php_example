@@ -5,8 +5,8 @@ require_once('models/user.php');
 class LoginController extends BaseController {
   function __construct() {
     parent::__construct();
-    $this->templateVars['test'] = 'abcdfe';
-    $this->templateVars['loginError'] = False;
+    $this->context['test'] = 'abcdfe';
+    $this->context['loginError'] = False;
   }
 
   function getRender() {
@@ -14,20 +14,30 @@ class LoginController extends BaseController {
   }
 
   function post() {
+    if (empty($_POST['username']) || empty($_POST['password'])) {
+      $this->context['loginError'] = True;
+      $this->context['loginErrorMessage'] = 'Please enter a username/password.';
+      return;
+    }
     $user = User::find($_POST['username']);
-    if (is_null($user) || !password_verify($_POST['password'], $user->password)) {
-      $this->templateVars['loginError'] = True;
+    if (empty($user) || !password_verify($_POST['password'], $user->getPassword())) {
+      $this->context['loginError'] = True;
+      $this->context['loginErrorMessage'] = 'Incorrect username/password combination.';
     } else {
       $_SESSION['user'] = $user;
-      header('Location: /php_example_mvc/');
+      header('Location: /php_example/');
     }
+  }
+
+  function postRender() {
+    require_once('views/login.php');
   }
 }
 
 class LogoutController extends BaseController {
   function get() {
     $_SESSION['user'] = NULL;
-    header('Location: /php_example_mvc/');
+    header('Location: /php_example/');
 
   }
 }
@@ -35,21 +45,30 @@ class LogoutController extends BaseController {
 class RegisterController extends BaseController {
   function __construct() {
     parent::__construct();
-    $this->templateVars['test'] = 'abcdfe';
-    $this->templateVars['registerError'] = False;
+    $this->context['registerError'] = False;
   }
 
   function post() {
+    if (empty($_POST['username']) || empty($_POST['password'])) {
+      $this->context['registerError'] = True;
+      $this->context['registerErrorMessage'] = 'Please enter a username/password.';
+      return;
+    }
     $user = User::create($_POST['username'], $_POST['password']);
     if (is_null($user)) {
-      $this->templateVars['registerError'] = True;
+      $this->context['registerError'] = True;
+      $this->context['registerErrorMessage'] = 'A user with that username already exists.';
     } else {
       $_SESSION['user'] = $user;
-      header('Location: /php_example_mvc/');
+      header('Location: /php_example/');
     }
   }
 
   function getRender() {
+    require_once('views/register.php');
+  }
+
+  function postRender() {
     require_once('views/register.php');
   }
 }

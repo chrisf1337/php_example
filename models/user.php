@@ -1,11 +1,11 @@
 <?php
-class User {
+class User implements JsonSerializable {
   public $username;
-  public $password;
+  public $id;
 
-  function __construct($username, $password) {
+  function __construct($id, $username) {
     $this->username = $username;
-    $this->password = $password;
+    $this->id = $id;
   }
 
   static function find($username) {
@@ -14,7 +14,7 @@ class User {
     if (is_null($user)) {
       return NULL;
     }
-    return new User($user['username'], $user['password']);
+    return new User($user['_id']->__toString(), $user['username']);
   }
 
   static function create($username, $password) {
@@ -23,12 +23,25 @@ class User {
       return NULL;
     } else {
       $hash = password_hash($password, PASSWORD_DEFAULT);
-      $result = $db->users->insert([
+      $insert = [
         'username' => $username,
         'password' => $hash
-      ]);
-      return new User($username, $hash);
+      ];
+      $result = $db->users->insert($insert);
+      return new User($insert['_id']->__toString(), $username);
     }
+  }
+
+  function getPassword() {
+    $db = Db::getInstance();
+    return $db->users->findOne(['username' => $this->username], ['password'])['password'];
+  }
+
+  function jsonSerialize() {
+    return [
+      'username' => $this->username,
+      'id' => $this->id
+    ];
   }
 }
 ?>

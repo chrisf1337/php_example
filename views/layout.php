@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title></title>
+  <title>Board</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 <body>
   <header>
-    <a href="/php_example_mvc">Home</a>
+    <a href="/php_example">Home</a>
     <?php if (empty($_SESSION['user'])) { ?>
-    <a href="/php_example_mvc/login">Login</a>
-    <a href="/php_example_mvc/register">Register</a>
+    <a href="/php_example/login">Login</a>
+    <a href="/php_example/register">Register</a>
     <?php } else { ?>
-    <a href='/php_example_mvc/logout'>Logout</a>
+    <a href='/php_example/logout'>Logout</a>
     <?php } ?>
   </header>
   <?php

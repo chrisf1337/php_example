@@ -1,13 +1,15 @@
 <h1>Register</h1>
-<form action="/php_example_mvc/register" method="post">
-  Username: <input type="text" name="username"><br>
-  Password: <input type="password" name="password"><br>
-  <input type="submit" value="Submit">
-</form>
+<div class="login-form">
+  <form action="/php_example/register" method="post">
+    <div class="login-form-elem">Username: <input type="text" name="username"></div>
+    <div class="login-form-elem">Password: <input type="password" name="password"></div>
+    <input type="submit" value="Submit">
+  </form>
+</div>
 <?php
-if ($this->templateVars['registerError']) {
+if ($this->context['registerError']) {
 ?>
-<div>A user with that username already exists.</div>
+<div><?php echo $this->context['registerErrorMessage']; ?></div>
 <?php
 }
 ?>

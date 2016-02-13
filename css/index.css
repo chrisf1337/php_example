@@ -1,0 +1,45 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.login-form {
+  width: 230px;
+}
+
+.login-form input[type=text], .login-form input[type=password] {
+  float: right;
+}
+
+.login-form input[type=submit] {
+  width: 50%;
+  display: block;
+  margin: 0 auto;
+}
+
+.login-form-elem {
+  padding: 2px;
+}
+
+.new-thread-div {
+  width: 300px;
+}
+
+.new-thread-div input[type=text], .new-thread-div textarea {
+  width: 100%;
+}
+
+.new-thread-div textarea {
+  resize: none;
+  height: 100px;
+}
+
+.new-thread-form-elem {
+  width: 100%;
+  padding: 2px;
+}
+
+.new-thread-form input[type=submit] {
+  width: 50%;
+  display: block;
+  margin: 0 auto;
+}

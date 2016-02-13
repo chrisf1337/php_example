@@ -22,7 +22,7 @@ if (count($url_path) === 1) {
       $controller = new RegisterController();
       break;
     case 'new_thread':
-      $controller = new ThreadController();
+      $controller = new NewThreadController();
       break;
   }
 }
