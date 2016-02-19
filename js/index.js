@@ -11,7 +11,8 @@ function displayNewThreadForm() {
       type: 'text',
       placeholder: 'Subject',
       name: 'subject',
-      class:'new-thread-subject'
+      class:'new-thread-subject',
+      autocomplete: 'off'
     })
   ));
   form.append(

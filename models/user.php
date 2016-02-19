@@ -14,7 +14,7 @@ class User implements JsonSerializable {
     if (is_null($user)) {
       return NULL;
     }
-    return new User($user['_id']->__toString(), $user['username']);
+    return new User((string)$user['_id'], $user['username']);
   }
 
   static function create($username, $password) {

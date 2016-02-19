@@ -1,15 +1,18 @@
 <?php
 require_once(__DIR__ . '/../connection.php');
+require_once('user.php');
 
 class Post implements JsonSerializable {
   public $op;
+  public $subject;
   public $body;
   public $time;
   public $postId;
-  public $id;
+  public $id;  // string
 
-  function __construct($id, $postId, $op, $body, $time) {
+  function __construct($id, $postId, $op, $subject, $body, $time) {
     $this->op = $op;
+    $this->subject = $subject;
     $this->body = $body;
     $this->id = $id;
     $this->postId = $postId;
@@ -19,6 +22,7 @@ class Post implements JsonSerializable {
   function jsonSerialize() {
     return [
       'op' => $this->op,
+      'subject' => $this->subject,
       'body' => $this->body,
       'id' => $this->id,
       'postId' => $this->postId,
@@ -26,7 +30,18 @@ class Post implements JsonSerializable {
     ];
   }
 
-  static function create($op, $body) {
+  static function find($postId) {
+    $db = Db::getInstance();
+    $result = $db->posts->findOne(['_id' => new MongoId($postId)]);
+    if (is_null($result)) {
+      return NULL;
+    }
+    return new Post((string)$result['_id'], $result['id'],
+      new User($result['op']['id'], $result['op']['username']),
+      $result['subject'], $result['body'], $result['time']);
+  }
+
+  static function create(User $op, $subject, $body) {
     $db = Db::getInstance();
     $currentId = $db->postid->findOne()['id'];
     $currentId++;
@@ -34,25 +49,35 @@ class Post implements JsonSerializable {
     $time = new MongoDate();
     $insert = [
       'op' => $op,
+      'subject' => $subject,
       'body' => $body,
       'time' => $time,
       'id' => $currentId
     ];
     $db->posts->insert($insert);
     $postId = $insert['_id']->__toString();
-    return new Post($postId, $currentId, $op, $body, $time);
+    return new Post($postId, $currentId, $op, $subject, $body, $time);
   }
 }
 
 class Thread implements JsonSerializable {
   public $posts;
   public $subject;
-  public $id;
+  public $firstPostPostId;
 
-  function __construct($id, $subject, $posts) {
-    $this->id = $id;
+  function __construct($firstPostPostId, $subject, $posts) {
+    $this->firstPostPostId = $firstPostPostId;
     $this->subject = $subject;
     $this->posts = $posts;
+  }
+
+  static function find($firstPostPostId) {
+    $db = Db::getInstance();
+    $result = $db->threads->findOne(['firstPostPostId' => $firstPostPostId]);
+    if (is_null($result)) {
+      return NULL;
+    }
+    return new Thread($result['firstPostPostId'], $result['subject'], $result['posts']);
   }
 
   static function findMostRecent($n) {
@@ -60,22 +85,30 @@ class Thread implements JsonSerializable {
     $threadsCursor = $db->threads->find()->sort(['_id' => -1])->limit($n);
     $array = [];
     foreach ($threadsCursor as $threadObject) {
-      array_push($array, new Thread($threadObject['_id']->__toString(), $threadObject['subject'],
+      array_push($array, new Thread($threadObject['firstPostPostId'], $threadObject['subject'],
                                     $threadObject['posts']));
     }
     return $array;
   }
 
-  static function create($op, $subject, $body) {
+  static function create(User $op, $subject, $body) {
     $db = Db::getInstance();
-    $post = Post::create($op, $body);
+    $post = Post::create($op, $subject, $body);
     $insert = [
+      'firstPostPostId' => $post->postId,
       'subject' => $subject,
-      'posts' => [$post->id]
+      'posts' => [$post->id],
     ];
     $db->threads->insert($insert);
-    $threadId = $insert['_id']->__toString();
-    return new Thread($threadId, $subject, [$post]);
+    return new Thread($post->id, $subject, [$post]);
+  }
+
+  function addReply($post) {
+    $db = Db::getInstance();
+    array_push($this->posts, $post->id);
+    $db->threads->update(['firstPostPostId' => $this->firstPostPostId],
+                         ['$set' => ['posts' => $this->posts]]);
+    var_dump(Thread::find($this->firstPostPostId));
   }
 
   function jsonSerialize() {

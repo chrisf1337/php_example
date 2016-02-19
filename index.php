@@ -2,7 +2,7 @@
 require_once('connection.php');
 require_once('controllers/index_controller.php');
 require_once('controllers/auth_controllers.php');
-require_once('controllers/post_controller.php');
+require_once('controllers/thread_controller.php');
 
 session_start();
 
@@ -23,6 +23,12 @@ if (count($url_path) === 1) {
       break;
     case 'new_thread':
       $controller = new NewThreadController();
+      break;
+    case 'thread':
+      $controller = new ThreadController();
+      break;
+    case 'reply':
+      $controller = new ReplyController();
       break;
   }
 }

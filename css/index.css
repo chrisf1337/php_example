@@ -43,3 +43,31 @@ body {
   display: block;
   margin: 0 auto;
 }
+
+.reply-div {
+  width: 300px;
+}
+
+.reply-div input[type=text], .reply-div textarea {
+  width: 100%;
+}
+
+.reply-div textarea {
+  resize: none;
+  height: 100px;
+}
+
+.reply-form-elem {
+  width: 100%;
+  padding: 2px;
+}
+
+.reply-form input[type=submit] {
+  width: 50%;
+  display: block;
+  margin: 0 auto;
+}
+
+.post {
+  border: 1px solid black;
+}
